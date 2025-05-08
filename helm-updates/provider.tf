@@ -17,8 +17,8 @@ provider "helm" {
 # AWS S3 backend for Terraform state
 terraform {
   backend "s3" {
-    bucket = "helm-updates"
-    key    = "rigettidemo/helm-updates.tfstate"
+    bucket = "rigettidemo"
+    key    = "state-file/helm-updates.tfstate"
     region = "us-east-1"  
     
     # Optional: Enable state locking with DynamoDB
