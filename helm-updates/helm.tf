@@ -310,34 +310,61 @@ resource "null_resource" "delay" {
   }
 }
 
+resource "helm_release" "aws_ebs_csi_driver" {
+  name       = "aws-ebs-csi-driver"
+  repository = "https://kubernetes-sigs.github.io/aws-ebs-csi-driver"
+  chart      = "aws-ebs-csi-driver"
+  version    = "2.43.0"
+  namespace  = "kube-system"
+
+  # Set the StorageClass as default (using the correct Helm value)
+  set {
+    name  = "storageClasses[0].default"
+    value = "true"
+  }
+
+  # Enable default StorageClass (matches Helm's `defaultStorageClass.enabled`)
+  set {
+    name  = "defaultStorageClass.enabled"
+    value = "true"
+  }
+
+  # Set volume type to gp2
+  set {
+    name  = "storageClasses[0].parameters.type"
+    value = "gp2"
+  }
+}
+
+
 #Kubernetes ClusterIssuer configuration for cert-manager
-#resource "kubernetes_manifest" "cluster_issuer" {
-#  depends_on = [null_resource.delay]
-#  manifest = {
-#    apiVersion = "cert-manager.io/v1"
-#    kind       = "ClusterIssuer"
-#    metadata = {
-#      name = "letsencrypt-prod"
-#    }
-#    spec = {
-#      acme = {
-#        email              = "kollzey539@gmail.com"
-#        preferredChain     = ""
-#        privateKeySecretRef = {
-#          name = "letsencrypt-secret-prod"
-#        }
-#        server = "https://acme-v02.api.letsencrypt.org/directory"
-#        solvers = [{
-#          http01 = {
-#            ingress = {
-#              class = "nginx"
-#            }
-#          }
-#        }]
-#      }
-#    }
-#  }
-#}
+resource "kubernetes_manifest" "cluster_issuer" {
+  depends_on = [null_resource.delay]
+  manifest = {
+    apiVersion = "cert-manager.io/v1"
+    kind       = "ClusterIssuer"
+    metadata = {
+      name = "letsencrypt-prod"
+    }
+    spec = {
+      acme = {
+        email              = "kollzey539@gmail.com"
+        preferredChain     = ""
+        privateKeySecretRef = {
+          name = "letsencrypt-secret-prod"
+        }
+        server = "https://acme-v02.api.letsencrypt.org/directory"
+        solvers = [{
+          http01 = {
+            ingress = {
+              class = "nginx"
+            }
+          }
+        }]
+      }
+    }
+  }
+}
 
 
 # Create the observability namespace
