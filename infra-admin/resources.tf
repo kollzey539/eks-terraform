@@ -1,8 +1,3 @@
-# Configure the AWS Provider
-provider "aws" {
-  region = "us-east-1" # Change to your region
-}
-
 # Generate new SSH key pair for bastion host
 resource "tls_private_key" "bastion_rsa" {
   algorithm = "RSA"
