@@ -1,7 +1,17 @@
-# Use existing CI/CD system's SSH key
+# Configure the AWS Provider
+provider "aws" {
+  region = "us-east-1" # Change to your region
+}
+
+# Generate new SSH key pair for bastion host
+resource "tls_private_key" "bastion_rsa" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
 resource "aws_key_pair" "bastion_key" {
   key_name   = "bastion-key-${formatdate("YYYYMMDD", timestamp())}"
-  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC..." # Your CI/CD system's public key
+  public_key = tls_private_key.bastion_rsa.public_key_openssh
 }
 
 # Reference existing VPC
@@ -83,4 +93,9 @@ output "bastion_public_ip" {
 
 output "ecr_repository_url" {
   value = aws_ecr_repository.rigetti_demo.repository_url
+}
+
+output "ssh_private_key" {
+  value     = tls_private_key.bastion_rsa.private_key_pem
+  sensitive = true
 }
