@@ -13,13 +13,9 @@ variable "cluster" {
 variable "ami_type" {
   description = "The AMI Version of the node"
   type        = string
-}
-
-variable "ami_type" {
-  description = "Type of AMI to use for EKS worker nodes"
-  type        = string
   default     = "AL2_x86_64"  # Amazon Linux 2 (x86)
 }
+
 
 
 variable "region" {
