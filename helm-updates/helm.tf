@@ -311,33 +311,33 @@ resource "null_resource" "delay" {
 }
 
 #Kubernetes ClusterIssuer configuration for cert-manager
-resource "kubernetes_manifest" "cluster_issuer" {
-  depends_on = [null_resource.delay]
-  manifest = {
-    apiVersion = "cert-manager.io/v1"
-    kind       = "ClusterIssuer"
-    metadata = {
-      name = "letsencrypt-prod"
-    }
-    spec = {
-      acme = {
-        email              = "kollzey539@gmail.com"
-        preferredChain     = ""
-        privateKeySecretRef = {
-          name = "letsencrypt-secret-prod"
-        }
-        server = "https://acme-v02.api.letsencrypt.org/directory"
-        solvers = [{
-          http01 = {
-            ingress = {
-              class = "nginx"
-            }
-          }
-        }]
-      }
-    }
-  }
-}
+#resource "kubernetes_manifest" "cluster_issuer" {
+#  depends_on = [null_resource.delay]
+#  manifest = {
+#    apiVersion = "cert-manager.io/v1"
+#    kind       = "ClusterIssuer"
+#    metadata = {
+#      name = "letsencrypt-prod"
+#    }
+#    spec = {
+#      acme = {
+#        email              = "kollzey539@gmail.com"
+#        preferredChain     = ""
+#        privateKeySecretRef = {
+#          name = "letsencrypt-secret-prod"
+#        }
+#        server = "https://acme-v02.api.letsencrypt.org/directory"
+#        solvers = [{
+#          http01 = {
+#            ingress = {
+#              class = "nginx"
+#            }
+#          }
+#        }]
+#      }
+#    }
+#  }
+#}
 
 
 # Create the observability namespace
