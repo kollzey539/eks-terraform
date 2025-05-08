@@ -317,25 +317,27 @@ resource "helm_release" "aws_ebs_csi_driver" {
   version    = "2.43.0"
   namespace  = "kube-system"
 
-  # Set the StorageClass as default (using the correct Helm value)
   set {
-    name  = "storageClasses[0].default"
-    value = "true"
+    name  = "storageClasses[0].name"
+    value = "ebs-sc"
   }
 
-  # Enable default StorageClass (matches Helm's `defaultStorageClass.enabled`)
   set {
-    name  = "defaultStorageClass.enabled"
-    value = "true"
+    name  = "storageClasses[0].volumeBindingMode"
+    value = "Immediate"
   }
 
-  # Set volume type to gp2
-#  set {
-#    name  = "storageClasses[0].parameters.type"
-#    value = "gp2"
-#  }
+  set {
+    name  = "storageClasses[0].parameters.type"
+    value = "gp2"
+  }
+
+  # Optional: Disable controller SA (uses node permissions)
+  set {
+    name  = "controller.serviceAccount.create"
+    value = "false"
+  }
 }
-
 
 #Kubernetes ClusterIssuer configuration for cert-manager
 resource "kubernetes_manifest" "cluster_issuer" {
