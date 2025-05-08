@@ -8,7 +8,7 @@ on:
       - 'infra-admin/**'  # Trigger only when changes are made to the infra-admin
 
 jobs:
-  deploy-ecr-bation:
+  deploy-ecr-bastion:
     runs-on: ubuntu-latest
 
     steps:

@@ -1,49 +1,41 @@
-
-# Create a new SSH key pair for the bastion host
+# Use existing CI/CD system's SSH key
 resource "aws_key_pair" "bastion_key" {
   key_name   = "bastion-key-${formatdate("YYYYMMDD", timestamp())}"
-  public_key = tls_private_key.bastion_rsa.public_key_openssh
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC..." # Your CI/CD system's public key
 }
 
-# Generate RSA key
-resource "tls_private_key" "bastion_rsa" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
-}
-
-# Save the private key to a file (optional)
-resource "local_file" "private_key" {
-  content  = tls_private_key.bastion_rsa.private_key_pem
-  filename = "${aws_key_pair.bastion_key.key_name}.pem"
-  file_permission = "0400"
-}
-
-# Find an existing public subnet
-data "aws_subnet" "public" {
+# Reference existing VPC
+data "aws_vpc" "main" {
   filter {
     name   = "tag:Name"
-    values = ["nat-gateway-subnet"] # Case-sensitive name match
+    values = ["main-vpc"]
   }
 }
 
-# Security group for bastion host (SSH only)
+# Reference existing public subnet
+data "aws_subnet" "public" {
+  filter {
+    name   = "tag:Name"
+    values = ["nat-gateway-subnet"]
+  }
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.main.id]
+  }
+}
+
+# Security group with open inbound SSH (default egress)
 resource "aws_security_group" "bastion_sg" {
   name        = "bastion-security-group"
-  description = "Allow SSH inbound traffic"
+  description = "Allow SSH from anywhere"
+  vpc_id      = data.aws_vpc.main.id
 
   ingress {
     description = "SSH from anywhere"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # Restrict this in production!
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["0.0.0.0/0"] # Open to all (adjust for production)
   }
 
   tags = {
@@ -51,7 +43,7 @@ resource "aws_security_group" "bastion_sg" {
   }
 }
 
-# Create the bastion host
+# Bastion host
 resource "aws_instance" "bastion" {
   ami                    = data.aws_ami.amazon_linux.id
   instance_type          = "t2.micro"
@@ -64,7 +56,7 @@ resource "aws_instance" "bastion" {
   }
 }
 
-# Get the latest Amazon Linux AMI
+# Latest Amazon Linux AMI
 data "aws_ami" "amazon_linux" {
   most_recent = true
   owners      = ["amazon"]
@@ -75,11 +67,11 @@ data "aws_ami" "amazon_linux" {
   }
 }
 
-# Create private ECR repository
+# ECR repository
 resource "aws_ecr_repository" "rigetti_demo" {
   name                 = "rigettidemo"
   image_tag_mutability = "MUTABLE"
-
+  
   image_scanning_configuration {
     scan_on_push = true
   }
@@ -92,8 +84,3 @@ output "bastion_public_ip" {
 output "ecr_repository_url" {
   value = aws_ecr_repository.rigetti_demo.repository_url
 }
-
-output "ssh_command" {
-  value = "ssh -i ${aws_key_pair.bastion_key.key_name}.pem ec2-user@${aws_instance.bastion.public_ip}"
-}
-#
