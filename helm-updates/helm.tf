@@ -333,10 +333,7 @@ resource "helm_release" "aws_ebs_csi_driver" {
   }
 
   # Optional: Disable controller SA (uses node permissions)
-  set {
-    name  = "controller.serviceAccount.create"
-    value = "false"
-  }
+
 }
 
 #Kubernetes ClusterIssuer configuration for cert-manager
