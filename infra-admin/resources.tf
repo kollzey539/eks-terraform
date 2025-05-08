@@ -100,3 +100,4 @@ output "ecr_repository_url" {
 output "ssh_command" {
   value = "ssh -i ${aws_key_pair.bastion_key.key_name}.pem ec2-user@${aws_instance.bastion.public_ip}"
 }
+#
