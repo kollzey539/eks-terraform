@@ -334,7 +334,7 @@ resource "helm_release" "aws_ebs_csi_driver" {
 #    name  = "storageClasses[0].parameters.type"
 #    value = "gp2"
 #  }
-#}
+}
 
 
 #Kubernetes ClusterIssuer configuration for cert-manager
