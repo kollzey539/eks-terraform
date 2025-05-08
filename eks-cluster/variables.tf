@@ -2,7 +2,7 @@
 variable "cluster_version" {
   description = "The desired version prefix for the GKE cluster."
   type        = string
-  default     = "1.25"
+  default     = "1.30"
 }
 
 variable "cluster" {
