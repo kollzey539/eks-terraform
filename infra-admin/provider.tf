@@ -7,7 +7,7 @@ provider "aws" {
 terraform {
   backend "s3" {
     bucket         = "rigettidemo"  # Replace with your S3 bucket name
-    key            = "state-file/eks-terraform.tfstate"
+    key            = "state-file/admin-infra.tfstate"
     region         = "us-east-1"              
     dynamodb_table = "terraform-lock-table"   
     encrypt        = true
