@@ -21,12 +21,8 @@ resource "local_file" "private_key" {
 # Find an existing public subnet
 data "aws_subnet" "public" {
   filter {
-    name   = "nat-gateway-subnet"
-    values = ["true"]
-  }
-  filter {
-    name   = "availability-zone"
-    values = ["us-east-1a"] 
+    name   = "tag:Name"
+    values = ["nat-gateway-subnet"] # Case-sensitive name match
   }
 }
 
