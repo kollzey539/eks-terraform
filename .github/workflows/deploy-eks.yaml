@@ -31,22 +31,25 @@ jobs:
         working-directory: ./eks-cluster
         env:
           TF_VAR_region: us-east-1
-          TF_VAR_cluster_name: rigetti-demo
+          TF_VAR_cluster: rigetti-demo
           TF_VAR_cluster_version: "1.30"  # EKS version
+          TF_VAR_ami_type: "AL2_x86_64"
         run: terraform init -input=false
 
       - name: Terraform Plan
         working-directory: ./eks-cluster
         env:
           TF_VAR_region: us-east-1
-          TF_VAR_cluster_name: rigetti-demo
+          TF_VAR_cluster: rigetti-demo
           TF_VAR_cluster_version: "1.30"
+          TF_VAR_ami_type: "AL2_x86_64"
         run: terraform plan -input=false
 
       - name: Terraform Apply
         working-directory: ./eks-cluster
         env:
           TF_VAR_region: us-east-1
-          TF_VAR_cluster_name: rigetti-demo
+          TF_VAR_cluster: rigetti-demo
           TF_VAR_cluster_version: "1.30"
+          TF_VAR_ami_type: "AL2_x86_64"
         run: terraform apply -auto-approve -input=false
