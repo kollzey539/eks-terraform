@@ -20,6 +20,6 @@ variable "ami_type" {
 variable "region" {
   description = "The GCP region where the GKE cluster and node pools will be deployed."
   type        = string
-  default     = "us-e"
+  default     = "us-east-1"
 }
 
