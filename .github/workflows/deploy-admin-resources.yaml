@@ -31,14 +31,6 @@ jobs:
         working-directory: ./infra-admin
         run: terraform init -input=false
 
-      - name: Terraform Plan
-        working-directory: ./infra-admin
-        run: terraform plan -input=false
-
-      - name: Terraform Apply
-        working-directory: ./infra-admin
-        run: terraform apply -auto-approve -input=false
-
       - name: Terraform Destroy
         working-directory: ./infra-admin
         run: terraform destroy -auto-approve -input=false
