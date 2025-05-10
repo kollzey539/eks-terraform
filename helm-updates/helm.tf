@@ -18,7 +18,7 @@ resource "kubernetes_namespace" "nginx_ingress" {
 
 }
 
-
+#
 resource "kubernetes_namespace" "monitoring" {
   metadata {
     name = "monitoring"
