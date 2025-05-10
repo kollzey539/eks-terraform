@@ -118,57 +118,75 @@ resource "helm_release" "cert_manager" {
 #  depends_on = [kubernetes_namespace.monitoring]
 #}
 
-#resource "helm_release" "loki" {
-#  name       = "loki"
-#  namespace  = kubernetes_namespace.monitoring.metadata[0].name
-#  repository = "https://grafana.github.io/helm-charts"
-#  chart      = "loki"
-#  version    = "6.6.5"
+resource "helm_release" "loki" {
+  name       = "loki"
+  namespace  = kubernetes_namespace.monitoring.metadata[0].name
+  repository = "https://grafana.github.io/helm-charts"
+  chart      = "loki"
+  version    = "6.6.5"
 
-#    set_sensitive {
-#    name  = "loki.storage.s3.accessKeyId"
-#    value = var.aws_access_key
-#  }
+  set_sensitive {
+    name  = "loki.storage.s3.accessKeyId"
+    value = var.aws_access_key
+  }
 
-#  set_sensitive {
-#    name  = "loki.storage.s3.secretAccessKey"
-#    value = var.aws_secret_key
-#  }
+  set_sensitive {
+    name  = "loki.storage.s3.secretAccessKey"
+    value = var.aws_secret_key
+  }
 
-#  values = [
-#    <<-EOF
-#    loki:
-#      storage:
-#        bucketNames:
-#          chunks: loki-chunks-demo-bucket
-#          ruler: loki-ruler-bucket-demo
-#          admin: loki-admin-bucket-demo
-#        type: s3
-#        s3:
-#          s3: s3://loki-demo-bucket-logs
-#          endpoint: ""
-#          region: us-east-1
-#          s3ForcePathStyle: false
-#          insecure: false
-#      useTestSchema: false
-#      testSchemaConfig: {}
-#      schemaConfig:
-#        configs:
-#          - from: 2024-04-01
-#            store: tsdb
-#            object_store: aws
-#            schema: v13
-#            index:
-#              prefix: loki_index_
-#              period: 24h
-#      auth_enabled: false
-#    EOF
-#  ]
-  
-#  timeout = 1200
+  values = [
+    <<-EOF
+    loki:
+      storage:
+        bucketNames:
+          chunks: loki-chunks-demo-bucket
+          ruler: loki-ruler-bucket-demo
+          admin: loki-admin-bucket-demo
+        type: s3
+        s3:
+          endpoint: ""
+          region: us-east-1
+          s3ForcePathStyle: false
+          insecure: false
+      useTestSchema: false
+      testSchemaConfig: {}
+      schemaConfig:
+        configs:
+          - from: 2024-04-01
+            store: tsdb
+            object_store: aws
+            schema: v13
+            index:
+              prefix: loki_index_
+              period: 24h
+      auth_enabled: false
 
-#  depends_on = [kubernetes_namespace.monitoring]
-#}
+    # Disable multiple components (optional, depending on needs)
+    replicaCount: 1
+    api:
+      enabled: true
+    queryFrontend:
+      enabled: false
+    query:
+      enabled: true
+    distributor:
+      enabled: true
+    ingester:
+      enabled: true
+    storageConfig:
+      s3:
+        s3ForcePathStyle: true
+        insecure: false
+
+    EOF
+  ]
+
+  timeout = 1200
+
+  depends_on = [kubernetes_namespace.monitoring]
+}
+
 
  
 resource "helm_release" "kube-prometheus-stack" {
