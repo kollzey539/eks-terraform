@@ -18,12 +18,12 @@ resource "aws_eks_node_group" "node_group_a" {
   node_group_name = "node-group-a-${formatdate("YYYYMMDDHHmmss", timestamp())}"
   node_role_arn   = aws_iam_role.eks_node_role.arn
   subnet_ids      = [aws_subnet.subnet_a.id]
-  instance_types  = ["t3.large"]
+  instance_types  = ["t3.xlarge"]
 
   scaling_config {
-    desired_size = 2
-    max_size     = 2
-    min_size     = 2
+    desired_size = 1
+    max_size     = 1
+    min_size     = 1
   }
 
   ami_type = var.ami_type
@@ -40,12 +40,12 @@ resource "aws_eks_node_group" "node_group_b" {
   node_group_name = "node-group-b-${formatdate("YYYYMMDDHHmmss", timestamp())}"
   node_role_arn   = aws_iam_role.eks_node_role.arn
   subnet_ids      = [aws_subnet.subnet_b.id]
-  instance_types  = ["t3.large"]
+  instance_types  = ["t3.xlarge"]
 
   scaling_config {
-    desired_size = 2
-    max_size     = 2
-    min_size     = 2
+    desired_size = 1
+    max_size     = 1
+    min_size     = 1
   }
 
   ami_type = var.ami_type
