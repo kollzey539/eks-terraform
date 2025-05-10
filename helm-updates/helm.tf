@@ -145,6 +145,7 @@ resource "helm_release" "loki" {
           admin: loki-admin-bucket-demo
         type: s3
         s3:
+          s3: s3://loki-demo-bucket-logs
           endpoint: ""
           region: us-east-1
           s3ForcePathStyle: false
@@ -162,30 +163,22 @@ resource "helm_release" "loki" {
               period: 24h
       auth_enabled: false
 
-    # Disable multiple components (optional, depending on needs)
-    replicaCount: 1
-    api:
-      enabled: true
-    queryFrontend:
-      enabled: false
-    query:
-      enabled: true
-    distributor:
-      enabled: true
-    ingester:
-      enabled: true
-    storageConfig:
-      s3:
-        s3ForcePathStyle: true
-        insecure: false
+    backend:
+      replicas: 1  # Scale down to 1 replica
 
+    read:
+      replicas: 1  # Scale down to 1 replica
+
+    write:
+      replicas: 1  # Scale down to 1 replica
     EOF
   ]
-
+  
   timeout = 1200
 
   depends_on = [kubernetes_namespace.monitoring]
 }
+
 
 
  
