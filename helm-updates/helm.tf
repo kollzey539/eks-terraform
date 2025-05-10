@@ -146,7 +146,6 @@ resource "helm_release" "loki" {
         type: s3
         s3:
           s3: s3://loki-demo-bucket-logs
-          endpoint: ""
           region: us-east-1
           s3ForcePathStyle: false
           insecure: false
@@ -162,15 +161,6 @@ resource "helm_release" "loki" {
               prefix: loki_index_
               period: 24h
       auth_enabled: false
-
-    backend:
-      replicas: 1  # Scale down to 1 replica
-
-    read:
-      replicas: 1  # Scale down to 1 replica
-
-    write:
-      replicas: 1  # Scale down to 1 replica
     EOF
   ]
   
