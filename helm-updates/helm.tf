@@ -97,26 +97,26 @@ resource "helm_release" "cert_manager" {
   depends_on = [kubernetes_namespace.cert_manager]
 }
 
-resource "helm_release" "promtail" {
-  name       = "promtail"
-  namespace  = kubernetes_namespace.monitoring.metadata[0].name
-  repository = "https://grafana.github.io/helm-charts"
-  chart      = "promtail"
-  version    = "6.16.2"  # Corrected the version format, should be without 'v'
+#resource "helm_release" "promtail" {
+#  name       = "promtail"
+#  namespace  = kubernetes_namespace.monitoring.metadata[0].name
+#  repository = "https://grafana.github.io/helm-charts"
+#  chart      = "promtail"
+#  version    = "6.16.2"  # Corrected the version format, should be without 'v'
 
-  values = [
-    <<-EOF
-    config:
-      clients:
-        - url: http://loki-gateway/loki/api/v1/push
-          tenant_id: "1"  # tenant_id should be a string if using multi-tenancy
-    EOF
-  ]
+#  values = [
+#    <<-EOF
+#    config:
+#      clients:
+#        - url: http://loki-gateway/loki/api/v1/push
+#          tenant_id: "1"  # tenant_id should be a string if using multi-tenancy
+#    EOF
+#  ]
 
-  timeout = 600
+#  timeout = 600
 
-  depends_on = [kubernetes_namespace.monitoring]
-}
+#  depends_on = [kubernetes_namespace.monitoring]
+#}
 
 #resource "helm_release" "loki" {
 #  name       = "loki"
@@ -179,12 +179,12 @@ resource "helm_release" "kube-prometheus-stack" {
   version    = "48.1.1"
 
     set_sensitive {
-    name  = "alertmanager.config.receivers[0].s3_configs[0].access_key"
+    name  = "alertmanager.config.receivers[1].sns_configs[0].sigv4.access_key"
     value = var.aws_access_key
   }
 
   set_sensitive {
-    name  = "alertmanager.config.receivers[0].s3_configs[0].secret_key"
+    name  = "alertmanager.config.receivers[1].sns_configs[0].sigv4.secret_key"
     value = var.aws_secret_key
   }
 
